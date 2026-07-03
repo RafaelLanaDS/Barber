@@ -6,8 +6,8 @@
 
 // --- CREDENCIAIS DO BARBEIRO ---
 export const BARBER_CREDENTIALS = {
-  username: 'joao',
-  password: 'navalha123',
+  username: 'Valtinho',
+  password: 'valtinho123',
   name: 'João Silva',
   phone: '5514997389356', // número do WhatsApp do barbeiro (com DDI)
   barbershop: 'Navalha Barbearia',
