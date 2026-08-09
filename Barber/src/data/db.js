@@ -8,7 +8,7 @@
 export const BARBER_CREDENTIALS = {
   username: 'Valtinho',
   password: 'valtinho123',
-  name: 'João Silva',
+  name: 'Valtinho',
   phone: '5514998217622', // número do WhatsApp do barbeiro (com DDI)
   barbershop: 'Navalha Barbearia',
 }
