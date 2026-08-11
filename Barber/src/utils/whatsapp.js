@@ -1,13 +1,9 @@
-import { BARBER_CREDENTIALS } from '../data/db'
+import { BARBER_PHONE, BARBERSHOP_NAME } from '../firebase/config'
 import { formatDate } from './date'
 
-/**
- * Abre o WhatsApp do barbeiro com mensagem de novo agendamento pré-preenchida.
- * O cliente só precisa clicar em "Enviar".
- */
 export const notifyBarber = ({ clientName, clientPhone, service, date, time, price }) => {
   const msg = [
-    `✂ *Novo Agendamento — ${BARBER_CREDENTIALS.barbershop}*`,
+    `✂ *Novo Agendamento — ${BARBERSHOP_NAME}*`,
     ``,
     `👤 *Cliente:* ${clientName}`,
     `📱 *WhatsApp:* ${clientPhone || 'Não informado'}`,
@@ -16,9 +12,13 @@ export const notifyBarber = ({ clientName, clientPhone, service, date, time, pri
     `⏰ *Horário:* ${time}`,
     `💰 *Valor:* R$ ${price}`,
     ``,
-    `_Agendamento feito pelo app Navalha Barbearia_`,
+    `_Agendamento feito pelo app ${BARBERSHOP_NAME}_`,
   ].join('\n')
 
-  const url = `https://wa.me/${BARBER_CREDENTIALS.phone}?text=${encodeURIComponent(msg)}`
-  window.open(url, '_blank')
+  window.open(`https://wa.me/${BARBER_PHONE}?text=${encodeURIComponent(msg)}`, '_blank')
+}
+
+export const sendPromo = (clientPhone, message) => {
+  const phone = clientPhone.replace(/\D/g, '')
+  window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(message)}`, '_blank')
 }

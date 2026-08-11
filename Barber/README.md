@@ -1,241 +1,181 @@
-# ✂ Navalha Barbearia — App Web Mobile
+# ✂ Stúdio Valtinho Barber — v2.0
 
-App web responsivo (mobile-first) para gerenciamento de uma barbearia. Permite ao barbeiro controlar a agenda e lucros, e ao cliente agendar horários sem criar conta, com notificação automática via WhatsApp.
+App web mobile-first com Firebase para gerenciamento completo de barbearia.
 
 ---
 
-## 📱 Telas do app
+## 🚀 O que há de novo na v2.0
 
-### Cliente (sem cadastro)
+| Recurso | v1 | v2 |
+|---------|----|----|
+| Banco de dados | localStorage (local) | Firebase Firestore (nuvem) |
+| Login cliente | Sem conta | Nome + WhatsApp (conta real) |
+| Login barbeiro | Senha no código | Firebase Authentication |
+| Agendamentos | Só no próprio navegador | Sincronizado em tempo real |
+| Horários fixos | ❌ | ✅ Com exceções semanais |
+| Histórico do cliente | ❌ | ✅ |
+| Base para promoções | ❌ | ✅ Todos os WhatsApps salvos |
+| Segurança | Senha visível | Firebase Auth seguro |
+
+---
+
+## 📱 Telas
+
+### Splash (login)
+- Visual da logo: **STÚDIO / Valtinho / BARBER** em branco com vermelho
+- Toggle Sou Cliente / Sou Barbeiro
+- Cliente entra com **nome + WhatsApp** (cria conta automática)
+- Barbeiro entra com **senha**
+
+### Barbeiro
 | Tela | Descrição |
 |------|-----------|
-| Login | Toggle entre "Sou Cliente" e "Sou Barbeiro" |
-| Serviços | Lista de cortes com preço, descrição e filtros |
-| Agendamento | Calendário semanal + horários disponíveis + dados do cliente |
-| Confirmação | Resumo do agendamento + botão WhatsApp |
-| Sucesso | Confirmação visual após envio |
+| Agenda | Calendário semanal + horários em tempo real. Cancelar agendamentos. Liberar horários fixos pontualmente |
+| Fixos | Cadastrar/remover clientes com horário semanal fixo |
+| Lucros | Faturamento dia/semana/mês + top serviços |
 
-### Barbeiro (com login)
+### Cliente
 | Tela | Descrição |
 |------|-----------|
-| Agenda | Calendário semanal + horários do dia (ocupados/livres) |
-| Lucros | Faturamento do dia, semana, mês + top serviços |
+| Serviços | Lista de cortes com filtros, preços e duração |
+| Agendamento | Calendário + horários livres em tempo real (fixos bloqueados aparecem com 📌) |
+| Confirmação | Resumo + disparo WhatsApp |
+| Histórico | Próximos e passados, com opção de cancelar |
 
 ---
 
-## 🗂 Estrutura de arquivos
+## ⚙️ Configuração
 
-```
-barbearia/
-├── index.html
-├── vite.config.js
-├── package.json
-└── src/
-    ├── main.jsx              # Entrada da aplicação
-    ├── App.jsx               # Rotas
-    ├── index.css             # Estilos globais
-    ├── data/
-    │   └── db.js             # ⚙️ BANCO FICTÍCIO (localStorage + mock data)
-    ├── utils/
-    │   ├── date.js           # Helpers de data em pt-BR
-    │   └── whatsapp.js       # Gerador do link wa.me
-    ├── hooks/
-    │   └── useAuth.js        # Hook de autenticação
-    ├── components/
-    │   ├── Barber/
-    │   │   └── BarberNav.jsx
-    │   └── Client/
-    │       └── ClientNav.jsx
-    └── pages/
-        ├── LoginPage.jsx
-        ├── barber/
-        │   ├── BarberAgenda.jsx
-        │   └── BarberProfits.jsx
-        └── client/
-            ├── ClientServices.jsx
-            ├── ClientSchedule.jsx
-            ├── ClientConfirm.jsx
-            └── ClientSuccess.jsx
-```
-
----
-
-## ⚙️ Configuração inicial
-
-### 1. Credenciais do barbeiro
-Edite o arquivo `src/data/db.js`:
+### 1. Credenciais e dados da barbearia
+Edite `src/firebase/config.js`:
 
 ```js
-export const BARBER_CREDENTIALS = {
-  username: 'joao',       // ← altere aqui
-  password: 'navalha123', // ← altere aqui
-  name: 'João Silva',
-  phone: '5511999998888', // ← WhatsApp do barbeiro com DDI (sem + ou espaços)
-  barbershop: 'Navalha Barbearia',
-}
+export const BARBER_EMAIL    = 'valtinho@navalha.com' // email no Firebase Auth
+export const BARBER_NAME     = 'Valtinho'
+export const BARBER_PHONE    = '5514998217622'        // WhatsApp com DDI, sem símbolos
+export const BARBERSHOP_NAME = 'Stúdio Valtinho Barber'
 ```
 
-### 2. Serviços oferecidos
-No mesmo arquivo `src/data/db.js`, edite o array `SERVICES`:
+### 2. Serviços e horários
+No mesmo arquivo, edite os arrays `SERVICES` e `WORKING_HOURS`.
 
-```js
-export const SERVICES = [
-  {
-    id: 1,
-    name: 'Degradê Clássico',
-    description: 'Fade preciso com acabamento impecável',
-    price: 40,         // valor em R$
-    duration: 45,      // duração em minutos
-    icon: '✂',
-  },
-  // adicione ou remova serviços aqui
-]
-```
-
-### 3. Horários de funcionamento
-Também em `src/data/db.js`:
-
-```js
-export const WORKING_HOURS = [
-  '08:00', '09:00', '10:00', '11:00',
-  '13:00', '14:00', '15:00', '16:00', '17:00',
-]
-```
+### 3. Firebase
+As credenciais do Firebase já estão configuradas no arquivo. Se precisar trocar de projeto, substitua o objeto `firebaseConfig`.
 
 ---
 
 ## 🚀 Como rodar localmente
 
 ```bash
-# Instalar dependências
 npm install
-
-# Iniciar servidor de desenvolvimento
 npm run dev
-
-# Build para produção
-npm run build
 ```
 
-Acesse `http://localhost:5173` no navegador.
+Acesse `http://localhost:5173/Barber/`
 
 ---
 
-## 📤 Deploy no Vercel (gratuito)
+## 📤 Deploy no GitHub Pages
 
-### Passo a passo completo
-
-**1. Suba o projeto no GitHub**
 ```bash
-git init
-git add .
-git commit -m "primeiro commit"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/barbearia-navalha.git
-git push -u origin main
+npm run deploy
 ```
 
-**2. Deploy no Vercel**
-- Acesse [vercel.com](https://vercel.com) e faça login com o GitHub
-- Clique em **"Add New Project"**
-- Selecione o repositório `barbearia-navalha`
-- O Vercel detecta automaticamente que é um projeto Vite
-- Clique em **"Deploy"**
-- Em ~1 minuto o app estará online com URL pública
+Disponível em: `https://RafaelLanaDS.github.io/Barber/`
 
-**3. Atualizações futuras**
-```bash
-git add .
-git commit -m "descrição da mudança"
-git push
-# O Vercel faz novo deploy automaticamente
+---
+
+## 💬 Fluxo do WhatsApp
+
+Quando o cliente confirma, o app:
+1. Salva o agendamento no Firestore (aparece instantaneamente na agenda do barbeiro)
+2. Abre o WhatsApp com mensagem pronta para o barbeiro
+3. Cliente clica Enviar — barbeiro recebe no celular
+
+---
+
+## 📌 Horários Fixos
+
+```
+Barbeiro cadastra: Toda terça às 10h → João
+        ↓
+Toda terça o horário aparece como 📌 (bloqueado para outros)
+        ↓
+Se precisar liberar aquela semana:
+Agenda → horário fixo → "liberar semana"
+        ↓
+Horário volta a aparecer livre para qualquer cliente
 ```
 
 ---
 
-## 💬 Como funciona o WhatsApp
+## 🔐 Segurança
 
-Quando o cliente finaliza o agendamento, o app monta esta mensagem e abre diretamente o WhatsApp do barbeiro:
+- Login do barbeiro: **Firebase Authentication** (senha não fica no código)
+- Login do cliente: WhatsApp como identificador único
+- Dados: **Firestore** com regras em modo teste (atualizar para produção após 30 dias)
+
+### Atualizar regras do Firestore para produção
+No Firebase Console → Firestore → Regras:
 
 ```
-✂ Novo Agendamento — Navalha Barbearia
-
-👤 Cliente: Carlos Silva
-📱 WhatsApp: (11) 99999-8888
-💈 Serviço: Degradê Clássico
-📅 Data: Ter, 10 Jun
-⏰ Horário: 10:00
-💰 Valor: R$ 40
-
-Agendamento feito pelo app Navalha Barbearia
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /appointments/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /clients/{uid} {
+      allow read, write: if request.auth.uid == uid;
+    }
+    match /fixedSlots/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.token.email == 'valtinho@navalha.com';
+    }
+    match /fixedExceptions/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /profits/{doc} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
 ```
 
-O cliente **clica em Enviar** — chega como mensagem normal no WhatsApp do barbeiro.
-
-> **Requisito:** o cliente precisa ter WhatsApp instalado no celular. Como o app é mobile-first, isso é praticamente garantido.
-
 ---
 
-## 💾 Sobre o armazenamento (localStorage)
+## 🛣 Próximos passos sugeridos
 
-O app usa o `localStorage` do navegador como banco de dados:
-
-| O que é salvo | Onde |
-|---------------|------|
-| Login do barbeiro | `localStorage` do navegador do barbeiro |
-| Agendamentos | `localStorage` do navegador de cada usuário |
-| Lucros | `localStorage` do navegador do barbeiro |
-
-**Importante:** cada navegador tem seu próprio localStorage. Isso significa que os dados do cliente e do barbeiro **não se sincronizam automaticamente** — o WhatsApp é o elo de comunicação entre eles.
-
-O barbeiro visualiza a agenda no app dele **depois de receber a mensagem no WhatsApp e registrar manualmente**, ou quando o cliente agendou no mesmo navegador (ex: demonstração).
-
----
-
-## 🔐 Segurança do login
-
-O login do barbeiro usa credenciais fixas no código (adequado para MVP). Para produção com múltiplos barbeiros ou maior segurança:
-
-- **Firebase Authentication** — gratuito até certo volume
-- **Supabase Auth** — open-source, plano gratuito generoso
-
----
-
-## 🛣 Roadmap futuro
-
-| Funcionalidade | Tecnologia sugerida |
-|----------------|---------------------|
-| Banco de dados real | Firebase Firestore ou Supabase |
-| Agenda sincronizada em tempo real | Firebase Realtime DB |
-| Notificação automática (sem clicar enviar) | Twilio API ou Evolution API |
-| Múltiplos barbeiros | Auth multi-usuário |
+| Funcionalidade | Como fazer |
+|----------------|-----------|
+| Envio de promoções | Buscar todos os clientes no Firestore e abrir WhatsApp em loop |
+| Notificação automática (sem clicar enviar) | Twilio ou Evolution API |
 | PWA (instalar como app) | Vite PWA Plugin |
-| Histórico do cliente | Firebase + login social |
+| Múltiplos barbeiros | Adicionar campo `barberId` nos agendamentos |
 
 ---
 
 ## 🧪 Credenciais de teste
 
 ```
-Usuário: joao
-Senha:   navalha123
+Barbeiro:
+  Email:  valtinho@navalha.com  (Firebase Auth)
+  Senha:  valtinho123
+
+Cliente:
+  Nome:   qualquer nome
+  Fone:   qualquer número de WhatsApp
 ```
 
 ---
 
-## 🛠 Tecnologias usadas
+## 🛠 Stack
 
 | Tecnologia | Uso |
 |------------|-----|
-| React 18 | Interface |
-| React Router v6 | Navegação entre telas |
-| Vite | Build e dev server |
-| localStorage | Persistência de dados |
-| wa.me | Integração WhatsApp |
-| Vercel | Hospedagem gratuita |
-
----
-
-## 📞 Suporte
-
-Para dúvidas ou melhorias, abra uma issue no repositório do GitHub.
+| React 18 + Vite | Interface |
+| React Router v6 | Navegação |
+| Firebase Auth | Login seguro |
+| Firestore | Banco em tempo real |
+| wa.me | Notificação WhatsApp |
+| GitHub Pages | Hospedagem gratuita |
