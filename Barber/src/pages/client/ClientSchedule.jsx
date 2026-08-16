@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ClientNav from '../../components/Client/ClientNav'
 import {
   listenAppointmentsByDate, listenFixedSlots,
-  getFixedExceptions, listenBlockedDays, WORKING_HOURS,
+  getFixedExceptions, listenBlockedDays, listenBlockedSlots, WORKING_HOURS,
 } from '../../firebase/config'
 import { getWeekDays, todayStr, formatDate } from '../../utils/date'
 
@@ -16,6 +16,7 @@ export default function ClientSchedule() {
   const [fixedSlots, setFixedSlots]     = useState([])
   const [exceptions, setExceptions]     = useState([])
   const [blockedDays, setBlockedDays]   = useState([])
+  const [blockedSlots, setBlockedSlots] = useState([])
   const weekDays = getWeekDays()
 
   useEffect(() => {
@@ -44,8 +45,15 @@ export default function ClientSchedule() {
     return unsub
   }, [])
 
+  useEffect(() => {
+    const unsub = listenBlockedSlots(selectedDate, setBlockedSlots)
+    return unsub
+  }, [selectedDate])
+
   const dayOfWeek    = new Date(selectedDate + 'T12:00:00').getDay()
   const isDayBlocked = blockedDays.includes(selectedDate)
+
+  const isSlotBlocked = (time) => blockedSlots.some(s => s.time === time)
 
   const isSlotBusy = (time) => {
     if (appointments.some(a => a.time === time)) return true
@@ -135,15 +143,16 @@ export default function ClientSchedule() {
             <div className="section-label">Horários disponíveis</div>
             <div className="slots-grid">
               {WORKING_HOURS.map(time => {
-                const busy  = isSlotBusy(time)
+                const blocked = isSlotBlocked(time)
+                const busy  = isSlotBusy(time) || blocked
                 const fixed = isFixed(time)
                 return (
                   <div key={time}
                     className={`time-pill ${busy ? (fixed ? 'fixed-taken' : 'taken') : ''} ${selectedTime === time && !busy ? 'selected' : ''}`}
                     onClick={() => !busy && setSelectedTime(time)}
-                    title={fixed ? 'Horário reservado' : busy ? 'Ocupado' : 'Disponível'}
+                    title={blocked ? 'Horário bloqueado' : fixed ? 'Horário reservado' : busy ? 'Ocupado' : 'Disponível'}
                   >
-                    {time} {busy ? (fixed ? '📌' : '✗') : ''}
+                    {time} {busy ? (blocked ? '🚫' : fixed ? '📌' : '✗') : ''}
                   </div>
                 )
               })}

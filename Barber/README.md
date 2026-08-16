@@ -125,17 +125,29 @@ service cloud.firestore {
     match /appointments/{doc} {
       allow read, write: if request.auth != null;
     }
+
     match /clients/{uid} {
-      allow read, write: if request.auth.uid == uid;
+      allow read, write: if request.auth != null;
     }
+
     match /fixedSlots/{doc} {
       allow read: if request.auth != null;
-      allow write: if request.auth.token.email == 'valtinho@navalha.com';
+      allow write: if request.auth != null;
     }
+
     match /fixedExceptions/{doc} {
       allow read, write: if request.auth != null;
     }
+
     match /profits/{doc} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /blockedDays/{doc} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /blockedSlots/{doc} {
       allow read, write: if request.auth != null;
     }
   }

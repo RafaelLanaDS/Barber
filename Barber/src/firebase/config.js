@@ -47,7 +47,7 @@ export const BARBERSHOP_NAME = 'Stúdio Valtinho Barber'
 export const SERVICES = [
   { id: 1, name: 'Cabelo',            description: 'Fade preciso com acabamento impecável', price: 35, duration: 30, icon: '✂' },
   { id: 2, name: 'Barba',             description: 'Tradicional',                           price: 35, duration: 15, icon: '◈' },
-  { id: 3, name: 'Cabelo e Barba',    description: 'Corte e cabelo e barba tradicional',    price: 70, duration: 45, icon: '▲' },
+  { id: 3, name: 'Cabelo e Barba',    description: 'Corte e cabelo e barba tradicional',    price: 70, duration: 60, icon: '▲' },
   { id: 4, name: 'Alisamento',        description: 'Alisamento capilar completo',           price: 30, duration: 90, icon: '★' },
   { id: 5, name: 'Luzes',             description: 'Luzes',                                 price: 130, duration: 60, icon: '✦' },
   { id: 6, name: 'Platinado',         description: 'Platinado',                             price: 130, duration: 60, icon: '✦' },
@@ -189,4 +189,19 @@ export const listenBlockedDays = (cb) =>
 export const isDayBlocked = async (dateStr) => {
   const snap = await getDoc(doc(db, 'blockedDays', dateStr))
   return snap.exists()
+}
+
+export const blockSlot = (dateStr, time) =>
+  setDoc(doc(db, 'blockedSlots', `${dateStr}_${time}`), { date: dateStr, time, createdAt: serverTimestamp() })
+
+export const unblockSlot = (dateStr, time) =>
+  deleteDoc(doc(db, 'blockedSlots', `${dateStr}_${time}`))
+
+export const listenBlockedSlots = (dateStr, cb) => {
+  const q = query(
+    collection(db, 'blockedSlots'),
+    where('date', '==', dateStr),
+    orderBy('time')
+  )
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))))
 }

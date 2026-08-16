@@ -5,6 +5,7 @@ import {
   listenFixedSlots, getFixedExceptions,
   createFixedException, deleteFixedException,
   listenBlockedDays, blockDay, unblockDay,
+  listenBlockedSlots, blockSlot, unblockSlot,
   WORKING_HOURS, SERVICES,
 } from '../../firebase/config'
 import { getWeekDays, todayStr, formatDate } from '../../utils/date'
@@ -17,8 +18,10 @@ export default function BarberAgenda() {
   const [fixedSlots, setFixedSlots]       = useState([])
   const [exceptions, setExceptions]       = useState([])
   const [blockedDays, setBlockedDays]     = useState([])
+  const [blockedSlots, setBlockedSlots]   = useState([])
   const [toast, setToast]                 = useState('')
   const [showForm, setShowForm]           = useState(false)
+  const [slotActionTime, setSlotActionTime] = useState(null)
   const [formTime, setFormTime]           = useState(null)
   const [form, setForm]                   = useState(EMPTY_FORM)
   const [saving, setSaving]               = useState(false)
@@ -43,6 +46,11 @@ export default function BarberAgenda() {
     return unsub
   }, [])
 
+  useEffect(() => {
+    const unsub = listenBlockedSlots(selectedDate, setBlockedSlots)
+    return unsub
+  }, [selectedDate])
+
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2600) }
 
   const selectedDayOfWeek = new Date(selectedDate + 'T12:00:00').getDay()
@@ -56,6 +64,7 @@ export default function BarberAgenda() {
   }
 
   const getAppointmentForTime = (time) => appointments.find(a => a.time === time)
+  const isSlotBlocked = (time) => blockedSlots.some(s => s.time === time)
 
   const handleCancelAppointment = async (appt) => {
     if (!window.confirm(`Cancelar agendamento de ${appt.clientName}?`)) return
@@ -94,6 +103,25 @@ export default function BarberAgenda() {
     setFormTime(time)
     setForm({ ...EMPTY_FORM, time })
     setShowForm(true)
+  }
+
+  const handleToggleBlockSlot = async (time) => {
+    if (getAppointmentForTime(time) || getFixedForTime(time)) return
+    if (isSlotBlocked(time)) {
+      await unblockSlot(selectedDate, time)
+      showToast(`Horário ${time} desbloqueado`)
+      setSlotActionTime(null)
+      return
+    }
+
+    if (!window.confirm(`Bloquear ${formatDate(selectedDate)} às ${time}? O cliente não poderá agendar neste horário.`)) {
+      setSlotActionTime(null)
+      return
+    }
+
+    await blockSlot(selectedDate, time)
+    showToast(`Horário ${time} bloqueado`)
+    setSlotActionTime(null)
   }
 
   const handleSaveManual = async (e) => {
@@ -206,6 +234,7 @@ export default function BarberAgenda() {
         {WORKING_HOURS.map(time => {
           const appt  = getAppointmentForTime(time)
           const fixed = getFixedForTime(time)
+          const blocked = isSlotBlocked(time)
 
           if (appt) return (
             <div key={time} className="appt-card is-busy">
@@ -246,9 +275,21 @@ export default function BarberAgenda() {
             </div>
           )
 
+          if (blocked) return (
+            <div key={time} className="appt-card" style={{ cursor: 'pointer', borderColor: '#555' }} onClick={() => handleToggleBlockSlot(time)}>
+              <div className="appt-info">
+                <div className="appt-time">{time}</div>
+                <div className="appt-service" style={{ color: '#E74C3C' }}>🚫 Horário bloqueado</div>
+              </div>
+              <button style={{ background: 'none', border: 'none', color: '#E74C3C', fontSize: 11, cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); handleToggleBlockSlot(time) }}>
+                desbloquear
+              </button>
+            </div>
+          )
+
           return (
             <div key={time} className="appt-card" style={{ cursor: isDayBlocked ? 'default' : 'pointer' }}
-              onClick={() => !isDayBlocked && openManualForm(time)}>
+              onClick={() => !isDayBlocked && setSlotActionTime(time)}>
               <div className="appt-info">
                 <div className="appt-time">{time}</div>
                 <div className="appt-service" style={{ color: 'var(--muted)' }}>
@@ -263,6 +304,29 @@ export default function BarberAgenda() {
           )
         })}
       </div>
+
+      {slotActionTime && (
+        <div className="modal-overlay" onClick={() => setSlotActionTime(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">{slotActionTime}</div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 16 }}>
+              Escolha a ação para este horário.
+            </div>
+            <button type="button" className="btn btn-red" style={{ margin: '0 0 8px', width: '100%' }} onClick={() => {
+              setSlotActionTime(null)
+              openManualForm(slotActionTime)
+            }}>
+              ➕ Adicionar agendamento
+            </button>
+            <button type="button" className="btn btn-outline" style={{ margin: '0 0 0', width: '100%' }} onClick={() => {
+              setSlotActionTime(null)
+              handleToggleBlockSlot(slotActionTime)
+            }}>
+              🚫 Bloquear horário
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal — agendamento manual */}
       {showForm && (
