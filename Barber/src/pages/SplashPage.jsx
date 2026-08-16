@@ -49,7 +49,7 @@ export default function SplashPage() {
         fontSize: 10, fontWeight: 700, letterSpacing: 1,
         padding: '3px 8px', borderRadius: 20,
       }}>
-        v2.1.0
+        v1.0.0
       </div>
 
       {/* Logo SVG inline representando Stúdio Valtinho Barber */}
@@ -115,7 +115,7 @@ export default function SplashPage() {
         </form>
       )}
 
-      <div style={{ fontSize:10, color:'#BBB', marginTop:24 }}>v2.0 · Stúdio Valtinho Barber</div>
+      <div style={{ fontSize:10, color:'#BBB', marginTop:24 }}>v1.0 · Stúdio Valtinho Barber</div>
     </div>
   )
 }
