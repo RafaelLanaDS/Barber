@@ -42,6 +42,16 @@ export default function SplashPage() {
 
   return (
     <div className="splash">
+      {/* Badge de versão — top right */}
+      <div style={{
+        position: 'absolute', top: 16, right: 16,
+        background: '#C0392B', color: '#fff',
+        fontSize: 10, fontWeight: 700, letterSpacing: 1,
+        padding: '3px 8px', borderRadius: 20,
+      }}>
+        v2.1.0
+      </div>
+
       {/* Logo SVG inline representando Stúdio Valtinho Barber */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 6, color: '#C0392B', textTransform: 'uppercase', marginBottom: 4 }}>

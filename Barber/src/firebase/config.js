@@ -13,8 +13,8 @@ import {
   addDoc,
   setDoc,
   getDoc,
-  getDocs,
   deleteDoc,
+  getDocs,
   updateDoc,
   query,
   where,
@@ -170,4 +170,21 @@ export const listenProfits = (cb) =>
 export const getAllClients = async () => {
   const snap = await getDocs(collection(db, 'clients'))
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+}
+
+// ── DIAS BLOQUEADOS ───────────────────────────────────────────
+export const blockDay = (dateStr) =>
+  setDoc(doc(db, 'blockedDays', dateStr), { date: dateStr, createdAt: serverTimestamp() })
+
+export const unblockDay = (dateStr) =>
+  deleteDoc(doc(db, 'blockedDays', dateStr))
+
+export const listenBlockedDays = (cb) =>
+  onSnapshot(collection(db, 'blockedDays'), snap =>
+    cb(snap.docs.map(d => d.id))
+  )
+
+export const isDayBlocked = async (dateStr) => {
+  const snap = await getDoc(doc(db, 'blockedDays', dateStr))
+  return snap.exists()
 }
