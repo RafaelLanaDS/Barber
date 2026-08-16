@@ -45,11 +45,12 @@ export const BARBERSHOP_NAME = 'Stúdio Valtinho Barber'
 
 // ── SERVIÇOS ──────────────────────────────────────────────────
 export const SERVICES = [
-  { id: 1, name: 'Degradê Clássico',       description: 'Fade preciso com acabamento impecável', price: 40, duration: 45, icon: '✂' },
-  { id: 2, name: 'Corte Tesoura',           description: 'Tradicional, textura natural e leve',   price: 50, duration: 60, icon: '◈' },
-  { id: 3, name: 'Barba Estilizada',        description: 'Modelagem com navalha + toalha quente', price: 35, duration: 30, icon: '▲' },
-  { id: 4, name: 'Completo (Corte + Barba)',description: 'Corte + Barba + Hidratação capilar',    price: 70, duration: 90, icon: '★' },
-  { id: 5, name: 'Corte Infantil',          description: 'Para crianças até 12 anos',             price: 30, duration: 30, icon: '✦' },
+  { id: 1, name: 'Cabelo',            description: 'Fade preciso com acabamento impecável', price: 35, duration: 30, icon: '✂' },
+  { id: 2, name: 'Barba',             description: 'Tradicional',                           price: 35, duration: 15, icon: '◈' },
+  { id: 3, name: 'Cabelo e Barba',    description: 'Corte e cabelo e barba tradicional',    price: 70, duration: 45, icon: '▲' },
+  { id: 4, name: 'Alisamento',        description: 'Alisamento capilar completo',           price: 30, duration: 90, icon: '★' },
+  { id: 5, name: 'Luzes',             description: 'Luzes',                                 price: 130, duration: 60, icon: '✦' },
+  { id: 6, name: 'Platinado',         description: 'Platinado',                             price: 130, duration: 60, icon: '✦' },
 ]
 
 // ── HORÁRIOS ──────────────────────────────────────────────────
