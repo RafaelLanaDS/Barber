@@ -54,17 +54,17 @@ export default function SplashPage() {
 
       {/* Logo SVG inline representando Stúdio Valtinho Barber */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-      <img  
-    src="/Barber/logo (2).png"
-    alt="Stúdio Valtinho Barber"
-    style={{ width: 280, maxWidth: '85%' }}
-  />
-</div>
+        <img  
+          src="/Barber/logo (2).png"
+          alt="Stúdio Valtinho Barber"
+          style={{ width: 280, maxWidth: '85%' }}
+        />
+      </div>
       
 
       {/* Toggle */}
       <div className="role-toggle">
-        <button className={`role-btn ${role==='client'?'active':''}`} onClick={()=>{setRole('client');setError('')}}>
+        <button className={`role-btn ${role==='client'?'active ':''}`} onClick={()=>{setRole('client');setError('')}}>
           Sou Cliente
         </button>
         <button className={`role-btn ${role==='barber'?'active':''}`} onClick={()=>{setRole('barber');setError('')}}>
