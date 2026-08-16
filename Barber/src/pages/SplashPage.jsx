@@ -54,17 +54,13 @@ export default function SplashPage() {
 
       {/* Logo SVG inline representando Stúdio Valtinho Barber */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 6, color: '#C0392B', textTransform: 'uppercase', marginBottom: 4 }}>
-          STÚDIO
-        </div>
-        <div style={{ fontFamily: 'Georgia, serif', fontSize: 52, fontWeight: 400, color: '#111', lineHeight: 1, fontStyle: 'italic', marginBottom: 2 }}>
-          Valtinho
-        </div>
-        <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: 6, color: '#111', textTransform: 'uppercase' }}>
-          BARBER
-        </div>
-        <div style={{ width: 40, height: 2, background: '#C0392B', margin: '10px auto 0' }} />
-      </div>
+      <img  
+    src="/Barber/logo (2).png"
+    alt="Stúdio Valtinho Barber"
+    style={{ width: 280, maxWidth: '85%' }}
+  />
+</div>
+      
 
       {/* Toggle */}
       <div className="role-toggle">
