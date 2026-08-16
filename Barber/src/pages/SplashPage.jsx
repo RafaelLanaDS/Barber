@@ -57,7 +57,7 @@ export default function SplashPage() {
         <img  
           src="/Barber/logo (2).png"
           alt="Stúdio Valtinho Barber"
-          style={{ width: 280, maxWidth: '85%' }}
+          style={{ width: 380, maxWidth: '100%' }}
         />
       </div>
       
