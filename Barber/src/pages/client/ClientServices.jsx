@@ -7,8 +7,8 @@ import { useAuth } from '../../hooks/useAuth'
 const FILTERS = ['Todos','Corte','Barba','Completo']
 const FILTER_MAP = {
   'Todos':    ()=>true,
-  'Corte':    s=>s.name.includes('Degradê')||s.name.includes('Corte'),
-  'Barba':    s=>s.name.toLowerCase().includes('barba'),
+  'Corte':    s=>s.name.includes('Cabelo')||s.name.includes('Corte'),
+  'Barba':    s=>s.name.toLowerCase().includes('Barba'),
   'Completo': s=>s.name.toLowerCase().includes('completo'),
 }
 
