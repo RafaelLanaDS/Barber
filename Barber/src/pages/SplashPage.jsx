@@ -3,6 +3,21 @@ import { useNavigate } from 'react-router-dom'
 import { loginBarber, loginClient } from '../firebase/config'
 import { useAuth } from '../hooks/useAuth.jsx'
 
+const formatPhone = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 11)
+
+  if (!digits) return ''
+
+  const areaCode = digits.slice(0, 2)
+  const rest = digits.slice(2)
+
+  if (digits.length <= 2) return `(${digits}`
+  if (digits.length <= 7) return `(${areaCode}) ${rest}`
+  if (digits.length <= 10) return `(${areaCode}) ${rest.slice(0, 4)}-${rest.slice(4)}`
+
+  return `(${areaCode}) ${rest.slice(0, 5)}-${rest.slice(5)}`
+}
+
 export default function SplashPage() {
   const [role, setRole]       = useState('client')
   const [password, setPassword] = useState('')
@@ -30,10 +45,17 @@ export default function SplashPage() {
 
   const handleClientLogin = async (e) => {
     e.preventDefault()
+    const digitsPhone = phone.replace(/\D/g, '')
+
     if (!name.trim() || !phone.trim()) { setError('Preencha nome e WhatsApp.'); return }
+    if (digitsPhone.length < 10 || digitsPhone.length > 11) {
+      setError('WhatsApp inválido. Use o formato (xx) xxxx-xxxx ou (xx) xxxxx-xxxx.')
+      return
+    }
+
     setError(''); setLoading(true)
     try {
-      await loginClient(name.trim(), phone.trim())
+      await loginClient(name.trim(), phone)
       navigate('/client/services')
     } catch (err) {
       setError('Erro ao entrar. Tente novamente.')
@@ -83,7 +105,10 @@ export default function SplashPage() {
           <div className="input-group">
             <label className="input-label" style={{ color: '#555' }}>WhatsApp</label>
             <input className="input-field" placeholder="(14) 99999-9999" type="tel"
-              value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} />
+              value={phone}
+              inputMode="numeric"
+              maxLength={15}
+              onChange={e=>{setPhone(formatPhone(e.target.value));setError('')}} />
           </div>
           {error && <div style={{ color:'#C0392B', fontSize:12, marginBottom:10, textAlign:'center' }}>{error}</div>}
           <button type="submit" className="btn btn-red" style={{ margin:'4px 0 0', width:'100%' }} disabled={loading}>
